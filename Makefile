@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-NAME = my_PGP
+NAME = mypgp
 
 all:
 		cargo build

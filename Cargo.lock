@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "my_PGP"
+name = "mypgp"
 version = "0.1.0"
