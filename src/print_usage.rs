@@ -1,0 +1,3 @@
+pub fn print_usage() {
+    println!("USAGE\n\t./mypgp [-xor | -aes | -rsa] [-c | -d] [-b] KEY\n\tthe MESSAGE is read from standard input\nDESCRIPTION\n\t-xor\tcomputation using XOR algorithm\n\t-aes\tcomputation using AES algorithm\n\t-rsa\tcomputation using RSA algorithm\n\t-c\tMESSAGE is clear and we want to cipher it\n\t-d\tMESSAGE is ciphered and we want to decipher it\n\t-b\tblock mode: for xor and aes, only works on one block\n\t\tMESSAGE and KEY must be of the same size\n\t-g P Q\tfor RSA only: generate a public and private key\n\t\tpair from the prime number P and Q");
+}
