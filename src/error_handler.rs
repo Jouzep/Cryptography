@@ -4,7 +4,11 @@ pub fn get_message() -> String {
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer)
         .expect("Failed to read from stdin");
-    buffer
+    let buff = &buffer;
+    let buff = buff.trim_end();
+    let buff = buff.trim_end_matches("\\r\\n");
+    let result = buff.to_string();
+    result
 }
 
 fn xor_aes_error(algo: &str, message: &str, block: bool, key: &str, content: &str) -> bool {
