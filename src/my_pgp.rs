@@ -1,5 +1,3 @@
-use std::ops::BitXor;
-use hex::FromHex;
 
 use crate::aes::aes_crypt::*;
 fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
