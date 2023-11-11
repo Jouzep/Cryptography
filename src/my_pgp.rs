@@ -1,6 +1,5 @@
 use std::ops::BitXor;
 use hex::FromHex;
-
 fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
     let mut result = vec![];
 
@@ -9,19 +8,11 @@ fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
     }
     result
 }
-fn hex_string_into_octal_array(hex_string: String) -> Vec<String> {
-    let mut two_char_array: Vec<String> = Vec::new();
-
-    for chunk in hex_string.chars().collect::<Vec<_>>().chunks(2) {
-        let two_chars: String = chunk.iter().collect();
-        two_char_array.push(two_chars);
-    }
-    return two_char_array;
-}
 fn aes_crypt(a: &[u8], key: String) -> Vec<u8> {
     println!("{:?}", a);
     println!("{}", key);
-    let array_key = hex_string_into_octal_array(key);
+    // let array_key = hex_string_into_decimal_array(key);
+    let array_key = Key::new(key);
     println!("{:?}", array_key);
     return Vec::new();
 }
