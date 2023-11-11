@@ -1,5 +1,3 @@
-use std::ops::BitXor;
-
 fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
     let mut result = vec![];
 
