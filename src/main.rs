@@ -5,6 +5,8 @@ mod my_pgp;
 mod print_usage;
 mod aes {
     pub mod aes_crypt;
+    pub mod aes_key_struct;
+    pub mod aes_decrypt;
 }
 
 fn main() -> ExitCode {
