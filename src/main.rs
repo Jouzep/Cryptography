@@ -3,7 +3,9 @@ use std::process::ExitCode;
 mod error_handler;
 mod my_pgp;
 mod print_usage;
-mod aes;
+mod aes {
+    pub mod aes_crypt;
+}
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();

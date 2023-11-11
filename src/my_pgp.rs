@@ -1,5 +1,7 @@
 use std::ops::BitXor;
 use hex::FromHex;
+
+use crate::aes::aes_crypt::*;
 fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
     let mut result = vec![];
 
@@ -8,18 +10,7 @@ fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
     }
     result
 }
-fn aes_crypt(a: &[u8], key: String) -> Vec<u8> {
-    println!("{:?}", a);
-    println!("{}", key);
-    // let array_key = hex_string_into_decimal_array(key);
-    let array_key = Key::new(key);
-    println!("{:?}", array_key);
-    return Vec::new();
-}
 
-fn aes_decrypt(a: &[u8], b: &[u8]) -> Vec<u8> {
-    return Vec::new();
-}
 
 fn run_xor_aes(mut args: Vec<String>, content: String) {
     // let key = hex::decode(args[4].to_string()).unwrap();
