@@ -31,7 +31,6 @@ impl Key {
                     *elem = *iter.next().unwrap_or(&0);
                 }
             }
-
             array
         };
         Key {
@@ -39,7 +38,7 @@ impl Key {
         }
     }
 
-    pub fn new_w_s_box(key : &Key) -> Self {
+    pub fn new_w_s_box(key : &Key, rcon_index: usize) -> Self {
         let new_key = key.clone();
         let mut test: [[u8; 4]; 4] = [[0; 4]; 4];
 
@@ -50,7 +49,7 @@ impl Key {
                 w1.rotate_left(1); // Rotate
                 for (index2, element2) in w1.iter_mut().enumerate() {
                     if index2 == 0 {
-                        *element2 = sub_bytes(element2) ^ w4[index2] ^ RCON[0];
+                        *element2 = sub_bytes(element2) ^ w4[index2] ^ RCON[rcon_index];
                     }
                     else {
                         *element2 = sub_bytes(element2) ^ w4[index2];
@@ -66,10 +65,8 @@ impl Key {
             }
         }
         println!("{:?}", test);
-
-
         Key {
-            ..new_key
+            array: test
         }
     }
 }
