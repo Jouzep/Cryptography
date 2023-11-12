@@ -9,15 +9,14 @@ mod aes {
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
-    let buffer: String = error_handler::get_message();
 
     if args.len() == 2 && &args[1] == "-h" {
         print_usage::print_usage();
         return ExitCode::SUCCESS;
     }
     let args_ref = args;
-    match error_handler::error_handler(&args_ref, &buffer) {
-        Ok(arg) => {
+    match error_handler::error_handler(&args_ref) {
+        Ok((arg, buffer)) => {
             my_pgp::run_pgp( args_ref, buffer);
         }
         Err(err) => {

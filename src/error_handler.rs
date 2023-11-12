@@ -11,7 +11,7 @@ pub fn get_message() -> String {
     result
 }
 
-fn xor_aes_error(algo: &str, message: &str, block: bool, key: &str, content: &str) -> bool {
+fn xor_aes_error(algo: &str, message: &str, block: bool, key: &str, content: &String) -> bool {
     let message_list = vec!["-c", "-d"];
 
     if algo == "-xor" && (!block || !message_list.contains(&message) || algo == "-xor" && content.len() != key.len()) {
@@ -20,13 +20,15 @@ fn xor_aes_error(algo: &str, message: &str, block: bool, key: &str, content: &st
     false
 }
 
-pub fn error_handler<'a>(args: &'a [String], content: &str) -> Result<&'a [String], &'static str> {
+pub fn error_handler<'a>(args: &'a [String]) -> Result<(&'a [String], String), &'static str> {
+    let buffer: String = if args[1] == "-rsa" { "".to_string() } else {  get_message()};
+
     if let [_, algo, message, block, key] = args {
-        if xor_aes_error(algo, &message, block == "-b", key, content) {
+        if xor_aes_error(algo, &message, block == "-b", key, &buffer) {
             return Err("Error in XOR or AES validation");
         }
     } else {
         println!("Not sufficient args");
     }
-    Ok(args)
+    Ok((args, buffer))
 }

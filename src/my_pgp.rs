@@ -1,7 +1,6 @@
-use std::ops::BitXor;
-use hex::FromHex;
-
 use crate::aes::aes_crypt::*;
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use std::io::Cursor;
 fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
     let mut result = vec![];
 
@@ -28,14 +27,30 @@ fn run_xor_aes(mut args: Vec<String>, content: String) {
     println!("{}", hex::encode(result));
 }
 
-    fn run_rsa() {
+fn gen_key(p: &u64, q: &u64) {
+    let mut buffer = Vec::new();
+    buffer.write_u64::<LittleEndian>(*p * *q).expect("Error");
+    println!("{:?}", hex::encode(&buffer));
+    let mut cursor = Cursor::new(&buffer);
+    let result = cursor.read_u64::<LittleEndian>().expect("Error");
+    let totient_n = (p - 1) * (q - 1);
+    let e = 65537;
+    println!("public key: {:x}-{:x}", e, result);
+}
 
+fn run_rsa(args: Vec<String>, message: String) {
+    let p =u64::from_str_radix(&args[3], 16).expect("Failed to decode hexadecimal string");
+    let q =u64::from_str_radix(&args[4], 16).expect("Failed to decode hexadecimal string");
+    let result = match args[2].as_str() {
+        "-g" => gen_key(&p, &q),
+        _ => println!("Wrong rsa flag"),
+    };
 }
 
 pub fn run_pgp(args : Vec<String>, message: String) {
     match args[1].as_str() {
         "-xor" | "-aes" => run_xor_aes(args, message),
-        "-rsa"=> run_rsa(),
+        "-rsa"=> run_rsa(args, message),
         _=>println!("Wrong algo"),
     }
 }
