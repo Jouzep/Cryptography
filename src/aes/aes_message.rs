@@ -42,10 +42,16 @@ impl AesMessage {
             }).collect();
             double_array
         };
-        let modulos =  double_array.len() % 4;
-        for i in 0..modulos {
+        let modulos =  (double_array.len()) % 4 ;
+        if modulos == 0 {
+            return AesMessage {
+                array: double_array
+            }
+        }
+        for i in 0..4 - modulos {
             double_array.push([0; 4]);
         }
+        println!("{:?}", double_array);
         AesMessage {
             array: double_array
         }
