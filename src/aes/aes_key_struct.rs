@@ -45,7 +45,6 @@ impl Key {
     }
 
     pub fn new_w_s_box(key : &Key, rcon_index: usize) -> Self {
-        let new_key = key.clone();
         let mut test: [[u8; 4]; 4] = [[0; 4]; 4];
 
         for index1 in 0.. test.len() {
