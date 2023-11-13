@@ -12,12 +12,6 @@ pub fn gen_expanded_keys(start_key: Key) -> Vec<Key>{
     return expanded_keys;
 }
 
-pub fn subbytes_message(mut msg: Vec<u8>) -> Vec<u8> {
-    for element in &mut msg {
-        *element = sub_bytes(element);
-    }
-    return msg;
-}
 pub fn aes_crypt(message: Vec<u8>, key: String) -> Vec<u8> {
     let expanded_keys = gen_expanded_keys(Key::new(key));
     let mut message = AesMessage::new(message);

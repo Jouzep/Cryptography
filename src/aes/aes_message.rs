@@ -16,7 +16,7 @@ fn mix_columns(column: &mut [u8; 4]) {
 
 fn galois_multiply(mut a: u8, mut b: u8) -> u8 {
     let mut result = 0;
-    let mut carry = 0;
+    // let mut carry = 0;
 
     for _ in 0..8 {
         if b & 1 != 0 {
@@ -33,7 +33,7 @@ fn galois_multiply(mut a: u8, mut b: u8) -> u8 {
 }
 
 impl AesMessage {
-    pub fn new(mut message: Vec<u8>) -> Self {
+    pub fn new(message: Vec<u8>) -> Self {
         let mut double_array: Vec<[u8; 4]> = {
             let double_array: Vec<_> = message.chunks(4).map(|chunk| {
                 let mut padded_chunk = [0; 4];
@@ -48,7 +48,7 @@ impl AesMessage {
                 array: double_array
             }
         }
-        for i in 0..4 - modulos {
+        for _ in 0..4 - modulos {
             double_array.push([0; 4]);
         }
         println!("{:?}", double_array);
@@ -65,7 +65,7 @@ impl AesMessage {
         }
     }
     pub fn shift_rows(&mut self) {
-        for (index, chunk) in self.array.chunks_mut(4).enumerate() {
+        for chunk in self.array.chunks_mut(4) {
             shift_row_single(chunk, 1);
             shift_row_single(chunk, 2);
             shift_row_single(chunk, 3);
@@ -94,7 +94,6 @@ impl AesMessage {
         self.sub_bytes();
         self.shift_rows();
         self.add_round_key(&expanded_keys.last().unwrap());
-
         for row in &self.array {
             for &element in row {
                 print!("{:02x}", element);
