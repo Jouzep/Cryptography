@@ -1,4 +1,5 @@
-use crate::aes::aes_key_struct::{sub_bytes, Key};
+use crate::aes::aes_function::{inv_shift_row_single, inv_sub_bytes, shift_row_single, xor_matrix, sub_bytes};
+use crate::aes::aes_key_struct::{Key};
 
 #[derive(Debug)]
 pub struct AesMessage {
@@ -10,13 +11,11 @@ fn mix_columns(column: &mut [u8; 4]) {
         result_column[i] = galois_multiply(0x02, column[i]) ^ galois_multiply(0x03, column[(i + 1) % 4])
             ^ galois_multiply(0x01, column[(i + 2) % 4]) ^ galois_multiply(0x01, column[(i + 3) % 4]);
     }
-    // Copy the result back to the original column
     column.copy_from_slice(&result_column);
 }
 
 fn galois_multiply(mut a: u8, mut b: u8) -> u8 {
     let mut result = 0;
-    // let mut carry = 0;
 
     for _ in 0..8 {
         if b & 1 != 0 {
@@ -25,11 +24,22 @@ fn galois_multiply(mut a: u8, mut b: u8) -> u8 {
         let high_bit_set = (a & 0x80) != 0;
         a <<= 1;
         if high_bit_set {
-            a ^= 0x1b; // XOR with the irreducible polynomial x^8 + x^4 + x^3 + x + 1
+            a ^= 0x1b;
         }
         b >>= 1;
     }
     result
+}
+
+fn inv_mix_columns(column: &mut [u8; 4]) {
+    let mut result_column = [0; 4];
+    for i in 0..4 {
+        result_column[i] = galois_multiply(0x0e, column[i])
+            ^ galois_multiply(0x0b, column[(i + 1) % 4])
+            ^ galois_multiply(0x0d, column[(i + 2) % 4])
+            ^ galois_multiply(0x09, column[(i + 3) % 4]);
+    }
+    column.copy_from_slice(&result_column);
 }
 
 impl AesMessage {
@@ -51,32 +61,67 @@ impl AesMessage {
         for _ in 0..4 - modulos {
             double_array.push([0; 4]);
         }
-        println!("{:?}", double_array);
         AesMessage {
             array: double_array
         }
     }
 
-    pub fn sub_bytes(&mut self) {
-        for element in self.array.iter_mut() {
-            for sub_element in element.iter_mut() {
-                *sub_element = sub_bytes(&sub_element);
+    pub fn sub_bytes(&mut self, mode: &str) {
+        match mode {
+            "cipher" => {
+                for element in self.array.iter_mut() {
+                    for sub_element in element.iter_mut() {
+                        *sub_element = sub_bytes(&sub_element);
+                    }
+                }
+            },
+            "decipher" => {
+                for element in self.array.iter_mut() {
+                    for sub_element in element.iter_mut() {
+                        *sub_element = inv_sub_bytes(&sub_element);
+                    }
+                }
             }
-        }
-    }
-    pub fn shift_rows(&mut self) {
-        for chunk in self.array.chunks_mut(4) {
-            shift_row_single(chunk, 1);
-            shift_row_single(chunk, 2);
-            shift_row_single(chunk, 3);
-        }
-    }
-    pub fn mix_columns(&mut self) {
-        for element in self.array.iter_mut() {
-            mix_columns(element);
-        }
-    }
 
+            _ => {}
+        }
+    }
+    pub fn shift_rows(&mut self, mode: &str) {
+        match mode {
+            "cipher" => {
+                for chunk in self.array.chunks_mut(4) {
+                    shift_row_single(chunk, 1);
+                    shift_row_single(chunk, 2);
+                    shift_row_single(chunk, 3);
+                }
+            },
+            "decipher" => {
+                for chunk in self.array.chunks_mut(4) {
+                    inv_shift_row_single(chunk, 1);
+                    inv_shift_row_single(chunk, 2);
+                    inv_shift_row_single(chunk, 3);
+                }
+            }
+            _ => {}
+        }
+
+    }
+    pub fn mix_columns(&mut self, mode : &str) {
+        match mode {
+            "cipher" => {
+                for element in self.array.iter_mut() {
+                    mix_columns(element);
+                }
+            },
+            "decipher" => {
+                for element in self.array.iter_mut() {
+                    inv_mix_columns(element);
+                }
+            }
+            _ => {}
+        }
+
+    }
     pub fn add_round_key(&mut self, key: &Key) {
         for element in self.array.chunks_mut(4) {
             xor_matrix(element, &key.array);
@@ -86,14 +131,32 @@ impl AesMessage {
     pub fn cipher(&mut self, expanded_keys : Vec<Key>) {
         self.add_round_key(&expanded_keys[0]);
         for i in 1..expanded_keys.len()-1 {
-            self.sub_bytes();
-            self.shift_rows();
-            self.mix_columns();
+            self.sub_bytes("cipher");
+            self.shift_rows("cipher");
+            self.mix_columns("cipher");
             self.add_round_key(&expanded_keys[i]);
         }
-        self.sub_bytes();
-        self.shift_rows();
+        self.sub_bytes("cipher");
+        self.shift_rows("cipher");
         self.add_round_key(&expanded_keys.last().unwrap());
+        for row in &self.array {
+            for &element in row {
+                print!("{:02x}", element);
+            }
+        }
+    }
+
+    pub fn decipher(&mut self, expanded_keys : Vec<Key>) {
+        self.add_round_key(&expanded_keys[expanded_keys.len() - 1]);
+        for i in (1..expanded_keys.len()-1).rev() {
+            self.shift_rows("decipher");
+            self.sub_bytes("decipher");
+            self.add_round_key(&expanded_keys[i]);
+            self.mix_columns("decipher");
+        }
+        self.shift_rows("decipher");
+        self.sub_bytes("decipher");
+        self.add_round_key(&expanded_keys[0]);
         for row in &self.array {
             for &element in row {
                 print!("{:02x}", element);
@@ -102,21 +165,3 @@ impl AesMessage {
     }
 }
 
-fn xor_matrix(first : &mut [[u8; 4]], second: &[[u8; 4]]) {
-    for (index, element) in first.iter_mut().enumerate() {
-        for (sub_index, sub_element) in element.iter_mut().enumerate() {
-            *sub_element = *sub_element ^ second[index][sub_index];
-        }
-    }
-}
-fn shift_row_single(matrix: &mut [[u8; 4]], index: usize) {
-    let one = matrix[0][index];
-    let two = matrix[1][index];
-    let three = matrix[2][index];
-    let four = matrix[3][index];
-
-    matrix[((0 + 4 - index) % 4) as usize][index] = one;
-    matrix[((1 + 4 - index) % 4) as usize][index] = two;
-    matrix[((2 + 4 - index) % 4) as usize][index] = three;
-    matrix[((3 + 4 - index) % 4) as usize][index] = four;
-}

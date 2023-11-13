@@ -1,6 +1,4 @@
-// extern crate hex;
-
-// use hex::FromHex;
+use crate::aes::aes_constant::RCON;
 use crate::aes::aes_key_struct::*;
 use crate::aes::aes_message::AesMessage;
 pub fn gen_expanded_keys(start_key: Key) -> Vec<Key>{
@@ -12,13 +10,17 @@ pub fn gen_expanded_keys(start_key: Key) -> Vec<Key>{
     return expanded_keys;
 }
 
-pub fn aes_crypt(message: Vec<u8>, key: String) -> Vec<u8> {
+pub fn aes_module(message: Vec<u8>, key: String, mode: &str) -> Vec<u8> {
     let expanded_keys = gen_expanded_keys(Key::new(key));
     let mut message = AesMessage::new(message);
-    message.cipher(expanded_keys);
-    return Vec::new();
-}
-
-pub fn aes_decrypt(_a: &[u8], _b: &[u8]) -> Vec<u8> {
+    match mode {
+        "cipher" => {
+            message.cipher(expanded_keys);
+        },
+        "decipher" => {
+            message.decipher(expanded_keys);
+        }
+        _ => {}
+    };
     return Vec::new();
 }
