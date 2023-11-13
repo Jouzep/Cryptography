@@ -49,7 +49,8 @@ impl Key {
 
         for index1 in 0.. test.len() {
             let w4 = key.array[index1]; // 4 - 4  w-4 for xor
-            if index1 == 0 {
+            match index1 {
+                0 =>  {
                 let mut w1 = key.array[3]; // 4 - 1  w-1
                 w1.rotate_left(1); // Rotate
                 for (index2, element2) in w1.iter_mut().enumerate() {
@@ -61,7 +62,8 @@ impl Key {
                     }
                 }
                 test[index1] = w1;
-            } else {
+            } ,
+            _ => {
                 let mut w1 = test[index1 - 1]; // 4 - 1  w-1
                 for (index2, element2) in w1.iter_mut().enumerate() {
                     *element2 = *element2 ^ w4[index2];
@@ -69,6 +71,7 @@ impl Key {
                 test[index1] = w1;
             }
         }
+            }
         Key {
             array: test
         }
