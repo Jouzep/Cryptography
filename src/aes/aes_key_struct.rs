@@ -1,6 +1,12 @@
+use std::fmt;
+
+impl fmt::Display for Key {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self.array)
+    }
+}
 #[derive(Debug)]
 #[derive(Clone)]
-
 pub struct Key {
     array: [[u8; 4]; 4],
 }
@@ -64,14 +70,13 @@ impl Key {
                 test[index1] = w1;
             }
         }
-        println!("{:?}", test);
         Key {
             array: test
         }
     }
 }
 
-fn sub_bytes(number: &u8) -> u8 {
+pub fn sub_bytes(number: &u8) -> u8 {
     let (first, second) = euclidean_division(number, 16);
     return S_BOX[first as usize][second as usize]
 }
@@ -97,3 +102,4 @@ pub const S_BOX: [[u8; 16]; 16] = [
 pub const RCON: [u8; 10] = [
     0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36,
 ];
+

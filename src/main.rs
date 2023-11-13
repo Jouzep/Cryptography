@@ -7,6 +7,8 @@ mod aes {
     pub mod aes_crypt;
     pub mod aes_key_struct;
     pub mod aes_decrypt;
+
+    pub mod aes_message;
 }
 
 fn main() -> ExitCode {

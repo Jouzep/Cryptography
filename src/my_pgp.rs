@@ -19,7 +19,7 @@ fn run_xor_aes(mut args: Vec<String>, content: String) {
     // println!("{:?}", byte_slice);
     let result = match (args[1].as_str(), args[2].as_str()) {
         ("-xor", "-c" | "-d") => xor(&decoded_result, &key),
-        ("-aes", "-c") => aes_crypt(&decoded_result, args.remove(4)),
+        ("-aes", "-c") => aes_crypt(decoded_result, args.remove(4)),
         ("-aes", "-d") => aes_decrypt(&decoded_result, &key),
         _ => Vec::new(),
     };
