@@ -27,15 +27,23 @@ fn run_xor_aes(mut args: Vec<String>, content: String) {
     println!("{}", hex::encode(result));
 }
 
+fn convert_little_endian(value: String) {
+    let char_vec: Vec<char> = value.chars().collect();
+    let result: Vec<char>;
+    for i in char_vec {
+        println!("{}", i);
+    }
+}
+
 fn gen_key(p: &u64, q: &u64) {
-    let mut buffer = Vec::new();
-    buffer.write_u64::<LittleEndian>(*p * *q).expect("Error");
-    println!("{:?}", hex::encode(&buffer));
-    let mut cursor = Cursor::new(&buffer);
-    let result = cursor.read_u64::<LittleEndian>().expect("Error");
+    let result = p * q;
     let totient_n = (p - 1) * (q - 1);
     let e = 65537;
-    println!("public key: {:x}-{:x}", e, result);
+    let n_hex = format!("{:x}", result);
+    println!("{:x}", result);
+    convert_little_endian(n_hex);
+
+    // println!("public key: {:x}-{:x}", e, result);
 }
 
 fn run_rsa(args: Vec<String>, message: String) {
