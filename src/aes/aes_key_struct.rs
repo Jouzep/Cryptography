@@ -8,7 +8,7 @@ impl fmt::Display for Key {
 #[derive(Debug)]
 #[derive(Clone)]
 pub struct Key {
-    array: [[u8; 4]; 4],
+    pub array: [[u8; 4]; 4],
 }
 
 fn euclidean_division(dividend: &u8, divisor: u8) -> (u8, u8) {
