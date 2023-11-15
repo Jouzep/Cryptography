@@ -41,10 +41,13 @@ fn modular_inverse(base: &BigUint, modulus: &BigUint) -> BigUint {
     base.modpow(&(modulus - BigUint::from(2u32)), modulus)
 }
 
-fn gen_key(p: &BigUint, q: &BigUint) {
+fn gen_key(args: Vec<String>) {
+    let p = BigUint::parse_bytes(&args[3].as_bytes(), 16).expect("Failed to decode hexadecimal string");
+    let q =BigUint::parse_bytes(&args[4].as_bytes(), 16).expect("Failed to decode hexadecimal string");
+
     let mut rng = rand::thread_rng();
-    let result = p * q;
-    let totient_n = (p - BigUint::one()) * (q - BigUint::one());
+    let result = &p * &q;
+    let totient_n = (&p - BigUint::one()) * (&q - BigUint::one());
     let two = BigUint::from(2u64);
     let mut e = generate_random_biguint_in_range(&mut rng, &two, &totient_n);
     while gcd(&e, &totient_n) != BigUint::from(1u64) {
@@ -66,12 +69,20 @@ fn gen_key(p: &BigUint, q: &BigUint) {
     println!("private key: {}-{}", d, n);
 }
 
+fn crypt_rsa(args: Vec<String>, message: String) {
+    let p =u64::from_str_radix(&message, 16).expect("Failed to decode hexadecimal string");
+    println!("{}", p);
+}
+
+fn decrypt_rsa(args: Vec<String>, message: String) {
+    
+}
 
 pub fn run_rsa(args: Vec<String>, message: String) {
-    let p = BigUint::parse_bytes(&args[3].as_bytes(), 16).expect("Failed to decode hexadecimal string");
-    let q =BigUint::parse_bytes(&args[4].as_bytes(), 16).expect("Failed to decode hexadecimal string");
-    let result = match args[2].as_str() {
-        "-g" => gen_key(&p, &q),
+    match args[2].as_str() {
+        "-g" => gen_key(args),
+        "-c" => crypt_rsa(args, message),
+        "-d" => decrypt_rsa(args, message),
         _ => println!("Wrong rsa flag"),
     };
 }

@@ -21,7 +21,7 @@ fn xor_aes_error(algo: &str, message: &str, block: bool, key: &str, content: &St
 }
 
 pub fn error_handler<'a>(args: &'a [String]) -> Result<(&'a [String], String), &'static str> {
-    let buffer: String = if args[1] == "-rsa" { "".to_string() } else {  get_message()};
+    let buffer: String = if args[1] == "-rsa" && args[2] == "-g" { "".to_string() } else {  get_message()};
 
     if let [_, algo, message, block, key] = args {
         if xor_aes_error(algo, &message, block == "-b", key, &buffer) {
