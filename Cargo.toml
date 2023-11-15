@@ -7,4 +7,7 @@ edition = "2021"
 
 [dependencies]
 hex = "0.4.2"
-byteorder = "1.4"
+num-bigint = "0.4.4"
+num-traits = "0.2"
+rand = "0.8"
+num-integer = "0.1"

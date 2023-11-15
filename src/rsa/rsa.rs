@@ -52,7 +52,6 @@ fn gen_key(p: &BigUint, q: &BigUint) {
     }
 
     let d = modular_inverse(&e, &totient_n);
-    let negative_one: BigUint = BigUint::one() - BigUint::from_u32(0).unwrap();
 
     let n_hex = format!("{:x}", result);
     let n = convert_little_endian(n_hex);
