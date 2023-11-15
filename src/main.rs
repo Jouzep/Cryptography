@@ -10,6 +10,9 @@ mod aes {
     pub mod aes_message;
     pub mod aes_function;
 }
+mod rsa {
+    pub mod rsa;
+}
 
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
