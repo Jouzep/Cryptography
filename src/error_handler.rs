@@ -2,12 +2,14 @@ use std::io::{self, Read};
 
 pub fn get_message() -> String {
     let mut buffer = String::new();
-    io::stdin().read_to_string(&mut buffer)
+    io::stdin()
+        .read_to_string(&mut buffer)
         .expect("Failed to read from stdin");
-    let buff = &buffer;
-    let buff = buff.trim_end();
-    let buff = buff.trim_end_matches("\\r\\n");
-    let result = buff.to_string();
+
+    let result = buffer
+        .trim()
+        .trim_matches(|c| c == '"' || c == '\r' || c == '\n')
+        .to_string();
     result
 }
 
