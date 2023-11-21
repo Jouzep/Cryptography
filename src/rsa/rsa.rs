@@ -34,9 +34,9 @@ fn gcd(a: &BigUint, b: &BigUint) -> BigUint {
 fn generate_random_biguint_in_range<R: Rng>(rng: &mut R, lower: &BigUint, upper: &BigUint) -> BigUint {
     let range = upper - lower;
     let random_bytes: Vec<u8> = (0..range.bits() / 8).map(|_| rng.gen()).collect();
-    let mut random_biguint = BigUint::from_bytes_be(&random_bytes);
+    let random_biguint = BigUint::from_bytes_be(&random_bytes);
 
-    &random_biguint % &range + lower;
+    let _ = &random_biguint % &range + lower;
     random_biguint
 }
 

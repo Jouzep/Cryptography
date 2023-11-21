@@ -23,7 +23,7 @@ fn main() -> ExitCode {
     }
     let args_ref = args;
     match error_handler::error_handler(&args_ref) {
-        Ok((arg, buffer)) => {
+        Ok((_arg, buffer)) => {
             my_pgp::run_pgp( args_ref, buffer);
         }
         Err(err) => {
