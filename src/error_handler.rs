@@ -1,5 +1,8 @@
 use std::io::{self, Read};
 
+
+use crate::rsa::{rsa::convert_little_endian};
+
 pub fn get_message() -> String {
     let mut buffer = String::new();
     io::stdin()
@@ -29,14 +32,35 @@ fn xor_aes_error(algo: &str, message: &String, block: bool, mode: &str, content:
     Ok(())
 }
 
+fn is_hexadecimal(s: &str) -> bool {
+    s.chars().all(|c| c.is_digit(16))
+}
+
 fn rsa_error<'a>(args: &'a [String]) -> Result<(), &'static str> {
     let message_list = vec!["-c", "-d", "-g"];
+
+    if args.len() < 4 || args.len() > 5 {
+        return Err("Wrong number of arg")
+    }
 
     if !message_list.contains(&args[2].as_str()) {
         println!("Error");
         return Err("Wrong rsa mode")
     }
 
+    if args[2] == "-g" {
+        let p = convert_little_endian(args[3].clone());
+        let q = convert_little_endian(args[4].clone());
+
+        if !is_hexadecimal(&p) || !is_hexadecimal(&q) {
+            return Err("Invalid hexadecimal representation for p or q");
+        }
+    } else {
+        let key = convert_little_endian(args[3].clone());
+        if !is_hexadecimal(&key) {
+            return Err("Invalide hexadecimal representation for key");
+        }
+    }
     Ok(())
 }
 
@@ -58,8 +82,6 @@ pub fn error_handler<'a>(args: &'a [String]) -> Result<(&'a [String], String), &
         };
     } else {
         println!("Not sufficient args");
-        // Decide what to return in this case
-        // Returning an Err for now
         Err("Not sufficient args")
     }
 }

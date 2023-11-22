@@ -4,7 +4,7 @@ use num_traits::{One};
 
 const MINIMUM_EXPONENT: u64 = 3;
 
-fn convert_little_endian(value: String) -> String {
+pub fn convert_little_endian(value: String) -> String {
     let mut char_vec: Vec<char> = value.chars().collect();
     let mut result: Vec<String> = Vec::new();
     let mut tmp: String = String::new();
