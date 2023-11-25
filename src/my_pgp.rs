@@ -1,5 +1,6 @@
 use crate::aes::aes_module::*;
 use crate::rsa::*;
+use crate::pgp::*;
 
 fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
     let mut result = vec![];
@@ -30,7 +31,8 @@ fn run_xor_aes(mut args: Vec<String>, content: String) {
 pub fn run_pgp(args : Vec<String>, message: String) {
     match args[1].as_str() {
         "-xor" | "-aes" => run_xor_aes(args, message),
-        "-rsa"=> rsa::run_rsa(args, message),
+        "-rsa" => rsa::run_rsa(args, message),
+        "-pgp" => pgp::pgp_exec(args, message),
         _=>println!("Wrong algo"),
     }
 }

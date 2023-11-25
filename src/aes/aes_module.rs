@@ -1,6 +1,7 @@
 use crate::aes::aes_constant::RCON;
 use crate::aes::aes_key_struct::*;
 use crate::aes::aes_message::AesMessage;
+
 pub fn gen_expanded_keys(start_key: Key) -> Vec<Key>{
     let mut expanded_keys: Vec<Key> = Vec::new();
     expanded_keys.push(start_key);

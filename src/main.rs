@@ -14,6 +14,10 @@ mod rsa {
     pub mod rsa;
 }
 
+mod pgp {
+    pub mod pgp;
+}
+
 fn main() -> ExitCode {
     let args: Vec<String> = env::args().collect();
 

@@ -55,12 +55,11 @@ fn rsa_error<'a>(args: &'a [String]) -> Result<(), &'static str> {
         if !is_hexadecimal(&p) || !is_hexadecimal(&q) {
             return Err("Invalid hexadecimal representation for p or q");
         }
-    } else {
-        let key = convert_little_endian(args[3].clone());
-        if !is_hexadecimal(&key) {
-            return Err("Invalide hexadecimal representation for key");
-        }
     }
+    Ok(())
+}
+
+fn pgp_error<'a>(args: &'a [String]) -> Result<(), &'static str> {
     Ok(())
 }
 
@@ -71,8 +70,9 @@ pub fn error_handler<'a>(args: &'a [String]) -> Result<(&'a [String], String), &
         get_message()
     };
 
-    if args.len() > 4 {
+    if args.len() >= 4 {
         return match args[1].as_str() {
+            "-pgp" => pgp_error(args).map(|()| (args, buffer)),
             "-rsa" => rsa_error(args).map(|()| (args, buffer)),
             "-aes" | "-xor" => {
                 let block = args[3].parse().unwrap_or(false);
