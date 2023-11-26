@@ -60,6 +60,16 @@ fn rsa_error<'a>(args: &'a [String]) -> Result<(), &'static str> {
 }
 
 fn pgp_error<'a>(args: &'a [String]) -> Result<(), &'static str> {
+    let message_list = vec!["-c", "-d", "-g"];
+
+
+    if args.len() != 4 {
+        return Err("Wrong nb of args");
+    }
+
+    if message_list.contains(&args[2].as_str()) {
+        return Err("Wrong pgp flag");
+    }
     Ok(())
 }
 
