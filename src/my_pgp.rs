@@ -2,12 +2,35 @@ use crate::aes::aes_module::*;
 use crate::rsa::*;
 use crate::pgp::*;
 
+fn fill_key(a: &[u8], len: usize) -> Vec<u8> {
+    let mut res: Vec<u8> = vec![0; len];
+    let mut index = 0;
+
+    for i in 0..len {
+        if index == a.len() {
+            index = 0;
+        }
+        res[i] = a[index];
+        index += 1;
+    }
+
+    res
+}
+
 fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
-    let mut result = vec![];
+    let mut result = Vec::new();
+
+
+    let b = if a.len() > b.len() {
+        fill_key(b, a.len())
+    } else {
+        b.to_vec()
+    };
 
     for (x, y) in a.iter().zip(b.iter()) {
         result.push(x ^ y);
     }
+
     result
 }
 
