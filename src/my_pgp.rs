@@ -32,7 +32,7 @@ pub fn run_pgp(args : Vec<String>, message: String) {
     match args[1].as_str() {
         "-xor" | "-aes" => run_xor_aes(args, message),
         "-rsa" => rsa::run_rsa(args, message),
-        "-pgp" => pgp::pgp_exec(args, message),
+        "-pgp" => pgp::pgp_exec(args[2].as_str() , message, args[3].as_str()),
         _=>println!("Wrong algo"),
     }
 }

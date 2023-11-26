@@ -2,6 +2,8 @@ use rand::Rng;
 use num_bigint::{BigUint, ToBigInt, BigInt};
 use num_traits::{One};
 
+use crate::print_usage;
+
 const MINIMUM_EXPONENT: u64 = 3;
 
 pub fn convert_little_endian(value: String) -> String {
@@ -95,27 +97,41 @@ fn gen_key(args: Vec<String>) {
     }
 }
 
-fn parse_biguint(hex_str: &str) -> BigUint {
+pub fn parse_biguint(hex_str: &str) -> BigUint {
     BigUint::parse_bytes(&convert_little_endian(hex_str.to_string()).as_bytes(), 16)
         .expect("Failed to decode hexadecimal string")
 }
 
-fn crypt_rsa(args: Vec<String>, message: String) {
+pub fn decrypt_rsa(rsa_key: &str, message: &str) -> String {
     let m = parse_biguint(&message);
-    let key_str: Vec<&str> = args[3].split("-").collect();
+    let key_str: Vec<&str> = rsa_key.split("-").collect();
     let key = parse_biguint(key_str[0]);
     let phi = parse_biguint(key_str[1]);
 
+
     let result_hex = format!("{:x}", m.modpow(&key, &phi));
     let result = convert_little_endian(result_hex);
+    result
+}
+
+pub fn crypt_rsa(rsa_key: &str, message: String, mode: bool) {
+    let m = parse_biguint(&message);
+    let key_str: Vec<&str> = rsa_key.split("-").collect();
+    let key = parse_biguint(key_str[0]);
+    let phi = parse_biguint(key_str[1]);
+
+
+    let result_hex = format!("{:x}", m.modpow(&key, &phi));
+    let result = convert_little_endian(result_hex);
+
     println!("{}", result);
 }
 
 pub fn run_rsa(args: Vec<String>, message: String) {
     match args[2].as_str() {
         "-g" => gen_key(args),
-        "-c" => crypt_rsa(args, message),
-        "-d" => crypt_rsa(args, message),
+        "-c" => crypt_rsa(args[3].as_str(), message, false),
+        "-d" => crypt_rsa(args[3].as_str(), message, false),
         _ => println!("Wrong rsa flag"),
     };
 }
