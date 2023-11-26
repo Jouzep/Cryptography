@@ -94,7 +94,8 @@ pub fn error_handler<'a>(args: &'a [String]) -> Result<(&'a [String], String), &
             "-rsa" => rsa_error(args, &buffer).map(|()| (args, buffer)),
             "-aes" | "-xor" => {
                 let block = args.contains(&"-b".to_string());
-                xor_aes_error(&args[1].as_str(), &buffer, block, &args[2].as_str(), &args[4]).map(|()| (args, buffer))
+                let key = if block { &args[4] } else { &args[3] };
+                xor_aes_error(&args[1].as_str(), &buffer, block, &args[2].as_str(), key).map(|()| (args, buffer))
             }
             _ => Err("Error in crypt flag"),
         };

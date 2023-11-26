@@ -14,7 +14,8 @@ fn xor(a: &[u8], b: &[u8]) -> Vec<u8> {
 
 fn run_xor_aes(mut args: Vec<String>, content: String) {
     // let key = hex::decode(args[4].to_string()).unwrap();
-    let key = hex::decode(&args[4]).expect("Failed to decode hexadecimal string");
+    let block = if args.contains(&"-b".to_string()) { &args[4] } else { &args[3] };
+    let key = hex::decode(block).expect("Failed to decode hexadecimal string");
     let decoded_result = hex::decode(&content).expect("Failed to decode hexadecimal string");
     // let byte_slice: &[u8] = &decoded_result;
     //
